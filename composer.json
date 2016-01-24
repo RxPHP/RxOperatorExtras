@@ -1,0 +1,31 @@
+{
+  "name": "rx/operator-extras",
+  "type": "library",
+  "description": "Extra Operators for RxPHP",
+  "keywords": [
+    "rxphp",
+    "reactivex",
+    "rx.php"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "David Dan",
+      "email": "davidwdan@gmail.com",
+      "role": "Developer"
+    },
+    {
+      "name": "Matt Bonneau",
+      "email": "matt@bonneau.net",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Rx\\Extra\\": "src/"
+    }
+  },
+  "require": {
+    "reactivex/rxphp": "^1.0.0"
+  }
+}
