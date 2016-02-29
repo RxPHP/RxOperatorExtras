@@ -33,18 +33,37 @@ class CutOperator implements OperatorInterface
      */
     public function __invoke(ObservableInterface $observable, ObserverInterface $observer, SchedulerInterface $scheduler = null)
     {
-        $buffer     = '';
+        $buffer     = null;
         $items      = [];
         $disposable = new CompositeDisposable();
+        $recursing  = false;
+        $completed  = false;
 
-        $onNext = function ($x) use (&$buffer, $observer, $scheduler, &$items, $disposable) {
+        $onCompleted = function () use (&$buffer, $observer, $scheduler, &$recursing) {
+            if ($recursing) {
+                return;
+            }
+            if ($buffer !== null) {
+                $observer->onNext($buffer);
+            }
+            $observer->onCompleted();
+        };
+
+        $onNext = function ($x) use (&$buffer, $observer, $scheduler, &$items, $disposable, &$recursing, &$completed, $onCompleted) {
+            if ($buffer === null) {
+                $buffer = '';
+            }
             $buffer .= $x;
             $items  = array_merge($items, explode($this->delimiter, $buffer));
             $buffer = array_pop($items);
 
-            $action = function ($reschedule) use (&$observer, &$items, &$buffer) {
+            $action = function ($reschedule) use (&$observer, &$items, &$buffer, &$recursing, &$completed, $onCompleted) {
 
                 if (count($items) === 0) {
+                    $recursing = false;
+                    if ($completed) {
+                        $onCompleted();
+                    }
                     return;
                 }
 
@@ -56,16 +75,10 @@ class CutOperator implements OperatorInterface
 
             };
 
+            $recursing = true;
             $schedulerDisposable = $scheduler->scheduleRecursive($action);
 
             $disposable->add($schedulerDisposable);
-        };
-
-        $onCompleted = function () use (&$buffer, $observer) {
-            if (!empty($buffer)) {
-                $observer->onNext($buffer);
-            }
-            $observer->onCompleted();
         };
 
         $callbackObserver = new CallbackObserver($onNext, [$observer, "onError"], $onCompleted);
