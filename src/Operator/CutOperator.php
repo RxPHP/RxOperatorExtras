@@ -2,9 +2,8 @@
 
 namespace Rx\Extra\Operator;
 
-use Rx\Disposable\CompositeDisposable;
+use Rx\Observable;
 use Rx\ObservableInterface;
-use Rx\Observer\CallbackObserver;
 use Rx\ObserverInterface;
 use Rx\Operator\OperatorInterface;
 use Rx\SchedulerInterface;
@@ -33,59 +32,24 @@ class CutOperator implements OperatorInterface
      */
     public function __invoke(ObservableInterface $observable, ObserverInterface $observer, SchedulerInterface $scheduler = null)
     {
-        $buffer     = null;
-        $items      = [];
-        $disposable = new CompositeDisposable();
-        $recursing  = false;
-        $completed  = false;
+        
+        $buffer = "";
 
-        $onCompleted = function () use (&$buffer, $observer, $scheduler, &$recursing) {
-            if ($recursing) {
-                return;
-            }
-            if ($buffer !== null) {
-                $observer->onNext($buffer);
-            }
-            $observer->onCompleted();
-        };
+        return $observable
+            ->defaultIfEmpty(Observable::just(null))
+            ->concat(Observable::just($this->delimiter))
+            ->concatMap(function ($x) use (&$buffer) {
 
-        $onNext = function ($x) use (&$buffer, $observer, $scheduler, &$items, $disposable, &$recursing, &$completed, $onCompleted) {
-            if ($buffer === null) {
-                $buffer = '';
-            }
-            $buffer .= $x;
-            $items  = array_merge($items, explode($this->delimiter, $buffer));
-            $buffer = array_pop($items);
-
-            $action = function ($reschedule) use (&$observer, &$items, &$buffer, &$recursing, &$completed, $onCompleted) {
-
-                if (count($items) === 0) {
-                    $recursing = false;
-                    if ($completed) {
-                        $onCompleted();
-                    }
-                    return;
+                if ($x === null || $buffer === null) {
+                    $buffer = null;
+                    return Observable::emptyObservable();
                 }
 
-                $value = array_shift($items);
+                $items  = explode($this->delimiter, $buffer . $x);
+                $buffer = array_pop($items);
 
-                $observer->onNext($value);
-
-                $reschedule();
-
-            };
-
-            $recursing = true;
-            $schedulerDisposable = $scheduler->scheduleRecursive($action);
-
-            $disposable->add($schedulerDisposable);
-        };
-
-        $callbackObserver = new CallbackObserver($onNext, [$observer, "onError"], $onCompleted);
-        $sourceDisposable = $observable->subscribe($callbackObserver);
-
-        $disposable->add($sourceDisposable);
-
-        return $disposable;
+                return Observable::fromArray($items);
+            })
+            ->subscribe($observer, $scheduler);
     }
 }

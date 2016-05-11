@@ -39,7 +39,7 @@ class CutTest extends FunctionalTestCase
                 return new CutOperator();
             });
         });
-        $this->assertMessages([onCompleted(230)], $results->getMessages());
+        $this->assertMessages([onCompleted(233)], $results->getMessages());
     }
 
     /**
@@ -60,8 +60,8 @@ class CutTest extends FunctionalTestCase
         });
         $this->assertMessages([
             onNext(202, "1"),
-            onNext(230, "2"),
-            onCompleted(230)
+            onNext(232, "2"),
+            onCompleted(233)
         ], $results->getMessages());
     }
 
@@ -88,8 +88,8 @@ class CutTest extends FunctionalTestCase
             onNext(205, "4"),
             onNext(206, "5"),
             onNext(207, ""),
-            onNext(230, "6"),
-            onCompleted(230)
+            onNext(232, "6"),
+            onCompleted(233)
         ], $results->getMessages());
     }
 
@@ -116,8 +116,8 @@ class CutTest extends FunctionalTestCase
             onNext(205, "4"),
             onNext(206, "5"),
             onNext(207, "6"),
-            onNext(230, ""),
-            onCompleted(230)
+            onNext(232, ""),
+            onCompleted(233)
         ], $results->getMessages());
     }
 
@@ -144,8 +144,8 @@ class CutTest extends FunctionalTestCase
             onNext(205, "4"),
             onNext(206, "5"),
             onNext(207, "6"),
-            onNext(230, "7"),
-            onCompleted(230)
+            onNext(232, "7"),
+            onCompleted(233)
         ], $results->getMessages());
     }
 
@@ -173,8 +173,8 @@ class CutTest extends FunctionalTestCase
             onNext(215, "4"),
             onNext(216, "5"),
             onNext(217, ""),
-            onNext(230, "6"),
-            onCompleted(230)
+            onNext(232, "6"),
+            onCompleted(233)
         ], $results->getMessages());
     }
 
@@ -199,10 +199,10 @@ class CutTest extends FunctionalTestCase
         });
         $this->assertMessages([
             onNext(202, "1"),
-            onNext(203, "2"),
-            onNext(203, "3"),
-            onNext(230, "4"),
-            onCompleted(230)
+            onNext(204, "2"),
+            onNext(206, "3"),
+            onNext(232, "4"),
+            onCompleted(233)
         ], $results->getMessages());
     }
 
@@ -223,8 +223,8 @@ class CutTest extends FunctionalTestCase
             });
         });
         $this->assertMessages([
-            onNext(230, ""),
-            onCompleted(230)
+            onNext(232, ""),
+            onCompleted(233)
         ], $results->getMessages());
     }
 
@@ -246,8 +246,8 @@ class CutTest extends FunctionalTestCase
         });
         $this->assertMessages([
             onNext(202, ""),
-            onNext(230, ""),
-            onCompleted(230)
+            onNext(232, ""),
+            onCompleted(233)
         ], $results->getMessages());
     }
 
@@ -270,10 +270,10 @@ class CutTest extends FunctionalTestCase
             });
         });
         $this->assertMessages([
-            onNext(202, "1"),
-            onNext(203, "2"),
-            onNext(230, ""),
-            onCompleted(230)
+            onNext(203, "1"),
+            onNext(204, "2"),
+            onNext(232, ""),
+            onCompleted(233)
         ], $results->getMessages());
     }
 
