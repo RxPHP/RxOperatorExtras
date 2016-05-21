@@ -271,7 +271,7 @@ class CutTest extends FunctionalTestCase
         });
         $this->assertMessages([
             onNext(203, "1"),
-            onNext(204, "2"),
+            onNext(205, "2"),
             onNext(232, ""),
             onCompleted(233)
         ], $results->getMessages());

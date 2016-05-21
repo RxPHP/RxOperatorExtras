@@ -1,7 +1,7 @@
 {
   "name": "rx/operator-extras",
   "type": "library",
-  "description": "Extra Operators for RxPHP",
+  "description": "Extra Operators and Observables for RxPHP",
   "keywords": [
     "rxphp",
     "reactivex",
