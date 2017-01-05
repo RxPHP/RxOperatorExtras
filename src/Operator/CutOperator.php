@@ -1,11 +1,12 @@
 <?php
 
-namespace Rx\Extra\Operator;
+namespace Rx\Operator;
 
+use Rx\DisposableInterface;
 use Rx\Observable;
 use Rx\ObservableInterface;
 use Rx\ObserverInterface;
-use Rx\Operator\OperatorInterface;
+use Rx\Scheduler;
 use Rx\SchedulerInterface;
 
 /**
@@ -17,39 +18,40 @@ use Rx\SchedulerInterface;
 class CutOperator implements OperatorInterface
 {
 
-    private $delimiter;
+    private $delimiter, $scheduler;
 
-    public function __construct($delimiter = PHP_EOL)
+    public function __construct($delimiter = PHP_EOL, SchedulerInterface $scheduler = null)
     {
         $this->delimiter = $delimiter;
+        $this->scheduler = $scheduler ?: Scheduler::getDefault();
     }
 
     /**
      * @param \Rx\ObservableInterface $observable
      * @param \Rx\ObserverInterface $observer
-     * @param \Rx\SchedulerInterface $scheduler
      * @return \Rx\DisposableInterface
+     * @throws \InvalidArgumentException
      */
-    public function __invoke(ObservableInterface $observable, ObserverInterface $observer, SchedulerInterface $scheduler = null)
+    public function __invoke(ObservableInterface $observable, ObserverInterface $observer): DisposableInterface
     {
-        
-        $buffer = "";
+        $buffer = '';
 
+        /** @var $observable Observable */
         return $observable
-            ->defaultIfEmpty(Observable::just(null))
-            ->concat(Observable::just($this->delimiter))
+            ->defaultIfEmpty(Observable::of(null, $this->scheduler))
+            ->concat(Observable::of($this->delimiter, $this->scheduler))
             ->concatMap(function ($x) use (&$buffer) {
 
                 if ($x === null || $buffer === null) {
                     $buffer = null;
-                    return Observable::emptyObservable();
+                    return Observable::empty($this->scheduler);
                 }
 
                 $items  = explode($this->delimiter, $buffer . $x);
                 $buffer = array_pop($items);
 
-                return Observable::fromArray($items);
+                return Observable::fromArray($items, $this->scheduler);
             })
-            ->subscribe($observer, $scheduler);
+            ->subscribe($observer);
     }
 }
