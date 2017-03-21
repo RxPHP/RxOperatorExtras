@@ -4,7 +4,8 @@ namespace Rx\React\Tests\Functional\Operator;
 
 use Rx\Functional\FunctionalTestCase;
 use Rx\Observable;
-use Rx\Extra\Operator\CutOperator;
+use Rx\Operator\CutOperator;
+
 
 class CutTest extends FunctionalTestCase
 {
@@ -12,13 +13,13 @@ class CutTest extends FunctionalTestCase
     /**
      * @test
      */
-    function cut_never()
+    public function cut_never()
     {
         $xs = Observable::never();
 
         $results = $this->scheduler->startWithCreate(function () use ($xs) {
             return $xs->lift(function () {
-                return new CutOperator();
+                return new CutOperator(PHP_EOL, $this->scheduler);
             });
         });
         $this->assertMessages([], $results->getMessages());
@@ -27,7 +28,7 @@ class CutTest extends FunctionalTestCase
     /**
      * @test
      */
-    function cut_empty()
+    public function cut_empty()
     {
         $xs = $this->createHotObservable([
             onNext(150, 1),
@@ -36,7 +37,7 @@ class CutTest extends FunctionalTestCase
 
         $results = $this->scheduler->startWithCreate(function () use ($xs) {
             return $xs->lift(function () {
-                return new CutOperator();
+                return new CutOperator(PHP_EOL, $this->scheduler);
             });
         });
         $this->assertMessages([onCompleted(233)], $results->getMessages());
@@ -45,7 +46,7 @@ class CutTest extends FunctionalTestCase
     /**
      * @test
      */
-    function cut_default_delimiter()
+    public function cut_default_delimiter()
     {
         $xs = $this->createHotObservable([
             onNext(150, 1),
@@ -55,7 +56,7 @@ class CutTest extends FunctionalTestCase
 
         $results = $this->scheduler->startWithCreate(function () use ($xs) {
             return $xs->lift(function () {
-                return new CutOperator();
+                return new CutOperator(PHP_EOL, $this->scheduler);
             });
         });
         $this->assertMessages([
@@ -68,7 +69,7 @@ class CutTest extends FunctionalTestCase
     /**
      * @test
      */
-    function cut_comma_delimiter()
+    public function cut_comma_delimiter()
     {
         $xs = $this->createHotObservable([
             onNext(150, 1),
@@ -78,7 +79,7 @@ class CutTest extends FunctionalTestCase
 
         $results = $this->scheduler->startWithCreate(function () use ($xs) {
             return $xs->lift(function () {
-                return new CutOperator(',');
+                return new CutOperator(',', $this->scheduler);
             });
         });
         $this->assertMessages([
@@ -96,7 +97,7 @@ class CutTest extends FunctionalTestCase
     /**
      * @test
      */
-    function cut_comma_delimiter_empty_last()
+    public function cut_comma_delimiter_empty_last()
     {
         $xs = $this->createHotObservable([
             onNext(150, 1),
@@ -106,7 +107,7 @@ class CutTest extends FunctionalTestCase
 
         $results = $this->scheduler->startWithCreate(function () use ($xs) {
             return $xs->lift(function () {
-                return new CutOperator(',');
+                return new CutOperator(',', $this->scheduler);
             });
         });
         $this->assertMessages([
@@ -124,7 +125,7 @@ class CutTest extends FunctionalTestCase
     /**
      * @test
      */
-    function cut_comma_delimiter_empty_first()
+    public function cut_comma_delimiter_empty_first()
     {
         $xs = $this->createHotObservable([
             onNext(150, 1),
@@ -134,7 +135,7 @@ class CutTest extends FunctionalTestCase
 
         $results = $this->scheduler->startWithCreate(function () use ($xs) {
             return $xs->lift(function () {
-                return new CutOperator(',');
+                return new CutOperator(',', $this->scheduler);
             });
         });
         $this->assertMessages([
@@ -152,7 +153,7 @@ class CutTest extends FunctionalTestCase
     /**
      * @test
      */
-    function cut_comma_delimiter_skip_time()
+    public function cut_comma_delimiter_skip_time()
     {
         $xs = $this->createHotObservable([
             onNext(150, 1),
@@ -163,7 +164,7 @@ class CutTest extends FunctionalTestCase
 
         $results = $this->scheduler->startWithCreate(function () use ($xs) {
             return $xs->lift(function () {
-                return new CutOperator(',');
+                return new CutOperator(',', $this->scheduler);
             });
         });
         $this->assertMessages([
@@ -181,7 +182,7 @@ class CutTest extends FunctionalTestCase
     /**
      * @test
      */
-    function cut_comma_delimiter_buffer_all()
+    public function cut_comma_delimiter_buffer_all()
     {
         $xs = $this->createHotObservable([
             onNext(150, 1),
@@ -194,7 +195,7 @@ class CutTest extends FunctionalTestCase
 
         $results = $this->scheduler->startWithCreate(function () use ($xs) {
             return $xs->lift(function () {
-                return new CutOperator(',');
+                return new CutOperator(',', $this->scheduler);
             });
         });
         $this->assertMessages([
@@ -209,7 +210,7 @@ class CutTest extends FunctionalTestCase
     /**
      * @test
      */
-    function cut_empty_string()
+    public function cut_empty_string()
     {
         $xs = $this->createHotObservable([
             onNext(150, 1),
@@ -219,7 +220,7 @@ class CutTest extends FunctionalTestCase
 
         $results = $this->scheduler->startWithCreate(function () use ($xs) {
             return $xs->lift(function () {
-                return new CutOperator();
+                return new CutOperator(PHP_EOL, $this->scheduler);
             });
         });
         $this->assertMessages([
@@ -231,7 +232,7 @@ class CutTest extends FunctionalTestCase
     /**
      * @test
      */
-    function cut_just_delimiter()
+    public function cut_just_delimiter()
     {
         $xs = $this->createHotObservable([
             onNext(150, 1),
@@ -241,7 +242,7 @@ class CutTest extends FunctionalTestCase
 
         $results = $this->scheduler->startWithCreate(function () use ($xs) {
             return $xs->lift(function () {
-                return new CutOperator();
+                return new CutOperator(PHP_EOL, $this->scheduler);
             });
         });
         $this->assertMessages([
@@ -254,7 +255,7 @@ class CutTest extends FunctionalTestCase
     /**
      * @test
      */
-    function cut_split_delimiter()
+    public function cut_split_delimiter()
     {
         $xs = $this->createHotObservable([
             onNext(150, 1),
@@ -266,7 +267,7 @@ class CutTest extends FunctionalTestCase
 
         $results = $this->scheduler->startWithCreate(function () use ($xs) {
             return $xs->lift(function () {
-                return new CutOperator("--");
+                return new CutOperator("--", $this->scheduler);
             });
         });
         $this->assertMessages([
@@ -280,7 +281,7 @@ class CutTest extends FunctionalTestCase
     /**
      * @test
      */
-    function cut_error()
+    public function cut_error()
     {
         $error = new \Exception();
 
@@ -292,7 +293,7 @@ class CutTest extends FunctionalTestCase
 
         $results = $this->scheduler->startWithCreate(function () use ($xs) {
             return $xs->lift(function () {
-                return new CutOperator();
+                return new CutOperator(PHP_EOL, $this->scheduler);
             });
         });
         $this->assertMessages([
@@ -303,7 +304,7 @@ class CutTest extends FunctionalTestCase
     /**
      * @test
      */
-    function cut_dispose()
+    public function cut_dispose()
     {
         $xs = $this->createHotObservable([
             onNext(150, 1),
@@ -313,7 +314,7 @@ class CutTest extends FunctionalTestCase
 
         $results = $this->scheduler->startWithDispose(function () use ($xs) {
             return $xs->lift(function () {
-                return new CutOperator();
+                return new CutOperator(PHP_EOL, $this->scheduler);
             });
         }, 204);
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Rx\Extra\Observable;
+namespace Rx\Observable;
 
 use Rx\Disposable\EmptyDisposable;
 use Rx\DisposableInterface;
@@ -41,10 +41,9 @@ class FromEventEmitterObservable extends Observable
 
     /**
      * @param ObserverInterface $observer
-     * @param \Rx\SchedulerInterface|null $scheduler
      * @return DisposableInterface
      */
-    public function subscribe(ObserverInterface $observer, \Rx\SchedulerInterface $scheduler = null)
+    public function _subscribe(ObserverInterface $observer): DisposableInterface
     {
         $this->object->on($this->nextAction, function () use ($observer) {
             $observer->onNext(func_get_args());
