@@ -25,12 +25,20 @@
       "Rx\\": "src/"
     }
   },
+  "autoload-dev": {
+    "files": [
+      "vendor/reactivex/rxphp/test/helper-functions.php"
+    ],
+    "psr-4": {
+      "Rx\\React\\Tests\\": "tests/",
+      "Rx\\": "vendor/reactivex/rxphp/test/Rx"
+    }
+  },
   "require": {
-    "php":"^7.0",
+    "php": "^7.0",
     "reactivex/rxphp": "^2.0"
   },
-  "dev-require": {
-    "async-interop/event-loop-implementation": "^0.4",
-    "wyrihaximus/react-async-interop-loop": "^0.2.1"
+  "require-dev": {
+    "phpunit/phpunit": "^5.5"
   }
 }
