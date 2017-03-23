@@ -8,11 +8,14 @@ This library houses extra operators that are not part of the official [RxPHP](ht
 
  
 * `cut` - splits a stream with a delimiter
-* `repeatDelay` - splits a stream with a delimiter
+* `repeatDelay` - repeats an observable sequence with when it completes after a delay
 ```PHP
     $observable->repeatDelay($initialDelay, $maxRetries, $maxRetryDelay, $retryDelayGrowth);
 ```
-
+* `retryDelay` - retries an observable sequence when it errors after a delay
+```PHP
+    $observable->retryDelay($initialDelay, $maxRetries, $maxRetryDelay, $retryDelayGrowth);
+```
 
 ## Observables
 
